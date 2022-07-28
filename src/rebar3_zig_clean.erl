@@ -25,7 +25,16 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    rebar_api:info("Running zig clean...", []),
+    rebar_api:info("Running zig clean... (2)", []),
+
+    Dirs = ["priv/",
+            "zig_src/zig-out/",
+            "zig_src/zig-cache/"],
+    [ begin
+          ok = file:del_dir_r(Dir),
+          rebar_api:info("Removed ~p", [Dir])
+      end || Dir <- Dirs ],
+
     {ok, State}.
 
 -spec format_error(any()) ->  iolist().

@@ -47,7 +47,7 @@ do(State) ->
                         "priv/" ++ BaseName ++ "." ++ Extension
                 end,
           ok = file:rename(Src, Dst),
-          rebar_api:info("Copied: ~p => ~p", [Src, Dst])
+          rebar_api:info("Moved: ~p => ~p", [Src, Dst])
       end || File <- Files,
              re:run(File, "^lib.*[0-9]+[.][0-9]+[.][0-9]+[.](so|dylib|dll)$") =/= nomatch ],
 

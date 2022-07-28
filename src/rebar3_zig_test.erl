@@ -26,6 +26,7 @@ init(State) ->
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
     rebar_api:info("Running zig test...", []),
+    ok = rebar3_zig_command:execute(State, ["build", "test"]),
     {ok, State}.
 
 -spec format_error(any()) ->  iolist().
