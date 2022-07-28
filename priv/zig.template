@@ -6,5 +6,5 @@
 
 {dir, "zig_src"}.
 {template, "zig_nif_build.zig", "zig_src/build.zig"}.
-{template, "zig_nif.zig", "zig_src/{{name}}.zig"}.
+{template, "zig_nif_main.zig", "zig_src/main.zig"}.
 {template, "zig_nif.erl", "src/{{name}}.erl"}.
