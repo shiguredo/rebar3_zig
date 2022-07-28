@@ -1,13 +1,11 @@
 -module(rebar3_zig_compile).
 
--include_lib("kernel/include/file.hrl").
-
 -export([init/1, do/1, format_error/1]).
 
 -define(PROVIDER, compile).
 -define(DEPS, [{default, compile}]).
 
--define(ZIG_LIB_OUT_DIR, "zig_src/zig-out/lib").
+-define(ZIG_OUT_LIB_DIR, "zig_src/zig-out/lib/").
 
 %% ===================================================================
 %% Public API
@@ -29,30 +27,29 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    %% Prepare.
-    {ok, Cwd} = file:get_cwd(),
-    ok = filelib:ensure_dir("priv/"),
-
-    %% TODO: log messages
-    case file:read_link_info(?ZIG_LIB_OUT_DIR) of
-        {error, enoent} ->
-            ok = filelib:ensure_dir(?ZIG_LIB_OUT_DIR),
-            ok = file:make_symlink(Cwd ++ "/priv/", ?ZIG_LIB_OUT_DIR),
-            ok;
-        {error, Reason} ->
-            rebar_api:abort("`file:read_link_info(\"~p\")` failure: reason=~p", [?ZIG_LIB_OUT_DIR, Reason]);
-        {ok, #file_info{type = symlink}} ->
-            ok;
-        {ok, _} ->
-            ok = file:del_dir_r(?ZIG_LIB_OUT_DIR),
-            ok = file:make_symlink(Cwd ++ "/priv/", ?ZIG_LIB_OUT_DIR),
-            ok
-    end,
-
     %% Build.
     rebar_api:info("Running zig compile...", []),
     ok = rebar3_zig_command:execute(State, ["build"]),
 
+    %% Copy artifacts.
+    rebar_api:info("Moving artifacts...", []),
+    {ok, Files} = file:list_dir(?ZIG_OUT_LIB_DIR),
+    ok = filelib:ensure_dir("priv/"),
+    [ begin
+          [BaseName | Rest] = string:split(File, ".", all),
+          Extension = lists:last(Rest),
+
+          Src = ?ZIG_OUT_LIB_DIR ++ File,
+          Dst = case Extension of
+                    "dylib" ->
+                        "priv/" ++ BaseName ++ ".so";
+                    _ ->
+                        "priv/" ++ BaseName ++ "." ++ Extension
+                end,
+          ok = file:rename(Src, Dst),
+          rebar_api:info("Copied: ~p => ~p", [Src, Dst])
+      end || File <- Files,
+             re:run(File, "^lib.*[0-9]+[.][0-9]+[.][0-9]+[.](so|dylib|dll)$") =/= nomatch ],
 
     {ok, State}.
 
