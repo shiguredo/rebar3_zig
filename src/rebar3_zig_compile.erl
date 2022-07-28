@@ -25,7 +25,24 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
+
+    %% Build.
     rebar_api:info("Running zig compile...", []),
+    ok = rebar3_zig_command:execute(State, ["build"]),
+
+    %% Copy artifacts.
+    rebar_api:info("Copying artifacts...", []),
+    {ok, Files} = file:list_dir("zig_src/zig-out/lib/"),
+    ok = filelib:ensure_dir("priv/"),
+    [ begin
+          Src = "zig_src/zig-out/lib/" ++ File,
+          Dst = "priv/" ++ File,
+          rebar_api:info("Copied: ~p => ~p", [Src, Dst]),
+          {ok, _} = file:copy(Src, Dst),
+          rebar_api:info("Copied: ~p => ~p", [Src, Dst])
+      end || File <- Files,
+             re:run(File, "^lib.*[.](so|dylib|dll)$") =/= nomatch],
+
     {ok, State}.
 
 -spec format_error(any()) ->  iolist().
