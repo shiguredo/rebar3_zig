@@ -1,6 +1,7 @@
 rebar3_zig
 ==========
 
+[![hex.pm version](https://img.shields.io/hexpm/v/rebar3_zig.svg)](https://hex.pm/packages/rebar3_zig)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [Erlang] から [Zig] で書かれたコードを利用可能にするための [Rebar3] プラグインです。
