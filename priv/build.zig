@@ -6,8 +6,8 @@ pub fn build(b: *std.build.Builder) void {
     const version = b.version(0, 0, 0);
     const lib = b.addSharedLibrary("{{ name }}", "nif.zig", version);
     lib.setBuildMode(mode);
-    if ("{{ include_dir }}".len > 0) {
-        lib.addIncludeDir("{{ include_dir }}");
+    if ("{{ include_path }}".len > 0) {
+        lib.addIncludeDir("{{ include_path }}");
     }
     lib.linker_allow_shlib_undefined = true;
     lib.install();

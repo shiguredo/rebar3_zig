@@ -1,7 +1,7 @@
 {description, "TODO"}.
 {variables, [
     {name, "zig_nif", "TODO"},
-    {include_dir, "", "TODO"}
+    {include_path, "", "TODO"}
 ]}.
 
 {dir, "zig_src"}.
