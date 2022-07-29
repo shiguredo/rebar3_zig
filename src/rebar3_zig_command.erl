@@ -33,8 +33,8 @@ execute_output(Port) ->
             ok;
         {Port, {exit_status, Status}} ->
             rebar_api:abort("zig command failed: status=~p", [Status]);
-        Other ->
-            rebar_api:abort("Received an unexpected message: ~p", [Other])
+        {Port, Message} ->
+            rebar_api:abort("Received an unexpected message: ~p", [Message])
     after
         60000 ->
             rebar_api:abort("Timeout", [])
