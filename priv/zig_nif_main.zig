@@ -5,6 +5,10 @@ fn add(x: c_int, y: c_int) c_int {
     return x + y;
 }
 
+test "add" {
+    try std.testing.expectEqual(add(1, 2), 3);
+}
+
 export fn add_nif(env: ?*c.ErlNifEnv, argc: c_int, argv: [*c]const c.ERL_NIF_TERM) callconv(.C) c.ERL_NIF_TERM {
     if (argc != 2) {
         return c.enif_make_badarg(env);
