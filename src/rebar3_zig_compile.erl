@@ -37,7 +37,7 @@ do(State) ->
     ok = filelib:ensure_dir("priv/"),
     [ begin
           [BaseName | Rest] = string:split(File, ".", all),
-          Extension = lists:last(Rest),
+          [Extension | _] = [ X || X <- Rest, re:run(X, "[0-9]+") =:= nomatch],
 
           Src = ?ZIG_OUT_LIB_DIR ++ File,
           Dst = case Extension of
@@ -49,7 +49,8 @@ do(State) ->
           ok = file:rename(Src, Dst),
           rebar_api:info("Moved: ~p => ~p", [Src, Dst])
       end || File <- Files,
-             re:run(File, "^lib.*[0-9]+[.][0-9]+[.][0-9]+[.](so|dylib|dll)$") =/= nomatch ],
+             re:run(File, "^lib.*[.](so|dylib|dll)") =/= nomatch,
+             re:run(File, "[0-9]+[.][0-9]+[.][0-9]+") =/= nomatch ],
 
     {ok, State}.
 
