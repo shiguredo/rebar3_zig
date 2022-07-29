@@ -1,13 +1,6 @@
 const c = @cImport(@cInclude("erl_nif.h"));
 const std = @import("std");
-
-fn add(x: c_int, y: c_int) c_int {
-    return x + y;
-}
-
-test "add" {
-    try std.testing.expectEqual(add(1, 2), 3);
-}
+const main = @import("main.zig");
 
 export fn add_nif(env: ?*c.ErlNifEnv, argc: c_int, argv: [*c]const c.ERL_NIF_TERM) callconv(.C) c.ERL_NIF_TERM {
     if (argc != 2) {
@@ -24,7 +17,7 @@ export fn add_nif(env: ?*c.ErlNifEnv, argc: c_int, argv: [*c]const c.ERL_NIF_TER
         return c.enif_make_badarg(env);
     }
 
-    const ret = add(x, y);
+    const ret = main.add(x, y);
     return c.enif_make_int(env, ret);
 }
 

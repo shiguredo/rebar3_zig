@@ -4,7 +4,7 @@ pub fn build(b: *std.build.Builder) void {
     const mode = b.standardReleaseOptions();
 
     const version = b.version(0, 0, 0);
-    const lib = b.addSharedLibrary("{{ name }}", "main.zig", version);
+    const lib = b.addSharedLibrary("{{ name }}", "nif.zig", version);
     lib.setBuildMode(mode);
     if ("{{ include_dir }}".len > 0) {
         lib.addIncludeDir("{{ include_dir }}");
