@@ -18,8 +18,8 @@ init(State) ->
             {deps, ?DEPS},                % The list of dependencies
             {example, "rebar3 zig test"}, % How to use the plugin
             {opts, []},                   % list of options understood by the plugin
-            {short_desc, "A rebar plugin"},
-            {desc, "A rebar plugin"}
+            {short_desc, "A rebar plugin to test Zig code"},
+            {desc, "A rebar plugin to test Zig code"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
 
