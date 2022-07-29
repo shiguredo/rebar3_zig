@@ -1,0 +1,11 @@
+{description, "TODO"}.
+{variables, [
+    {name, "zig_nif", "TODO"},
+    {include_path, "", "TODO"}
+]}.
+
+{dir, "zig_src"}.
+{template, "build.zig", "zig_src/build.zig"}.
+{template, "nif.zig", "zig_src/nif.zig"}.
+{template, "main.zig", "zig_src/main.zig"}.
+{template, "nif.erl", "src/{{name}}.erl"}.
