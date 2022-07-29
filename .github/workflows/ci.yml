@@ -12,17 +12,23 @@ jobs:
         otp_vsn: [25.0]
         zig_vsn: [linux-x86_64-0.10.0-dev.3362+e863292fe]
         os: [ubuntu-latest]
+    env:
+      C_INCLUDE_PATH: /usr/include/:/usr/include/x86_64-linux-gnu/
     steps:
       - uses: actions/checkout@v2
       - run: curl https://ziglang.org/builds/zig-${{ matrix.zig_vsn }}.tar.xz --output - | tar Jxvf -
-      - run: echo "zig-${{ matrix.zig_vsn }}/" >> $GITHUB_PATH
-      - run: zig
-      # - run: rebar3 compile
-      # - run: rebar3 xref
-      # - run: rebar3 efmt -c
-      # - run: rebar3 eunit
-      # - run: rebar3 dialyzer
-      # - run: rebar3 edoc
+      - run: echo "$PWD/zig-${{ matrix.zig_vsn }}/" >> $GITHUB_PATH
+      - run: zig version
+      - id: include_path
+        run: echo "::set-output name=include_path::$(echo /usr/lib/erlang/erts-*/include/)"
+      - run: |
+          rebar3 new lib zig_test
+          cat rebar.config.sample > zig_test/rebar.config
+      - run: |
+          mkdir zig_test/_checkouts/
+          ln -fns $PWD/ zig_test/_checkouts/
+      - run: cd zig_test/ && rebar3 new zig name=add include_path=${{ steps.include_path.outputs.include_path }}
+      - run: cd zig_test/ && rebar3 eunit
       - name: Slack Notification
         if: failure()
         uses: rtCamp/action-slack-notify@v2
