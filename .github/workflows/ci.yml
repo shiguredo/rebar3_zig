@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  ci:
+    name: Run checks and tests over ${{ matrix.otp_vsn }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        otp_vsn: [25.0]
+        zig_vsn: [linux-x86_64-0.10.0-dev.3362+e863292fe]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - run: curl https://ziglang.org/builds/zig-${{ matrix.zig_vsn }}.tar.xz --output - | tar Jxvf -
+      - run: echo "zig-${{ matrix.zig_vsn }}/" >> $GITHUB_PATH
+      - run: zig
+      # - run: rebar3 compile
+      # - run: rebar3 xref
+      # - run: rebar3 efmt -c
+      # - run: rebar3 eunit
+      # - run: rebar3 dialyzer
+      # - run: rebar3 edoc
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: internal-moegi
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure test
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
