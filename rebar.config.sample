@@ -1,5 +1,7 @@
+{erl_opts, [debug_info]}.
+
+{project_plugins, [rebar3_zig]}.
+
 {provider_hooks, [{post, [{compile, {zig, compile}},
                           {eunit, {zig, test}},
                           {clean, {zig, clean}}]}]}.
-
-{project_plugins, [rebar3_zig]}.
