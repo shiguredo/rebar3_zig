@@ -1,0 +1,5 @@
+{provider_hooks, [{post, [{compile, {zig, compile}},
+                          {eunit, {zig, test}},
+                          {clean, {zig, clean}}]}]}.
+
+{project_plugins, [rebar3_zig]}.
